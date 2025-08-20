@@ -8,37 +8,53 @@ import numpy as np
 #######################################################
 ##############       QUESTION 1 HERE   ################
 #######################################################
+from copy import copy, deepcopy
+import sys, os
+import numpy as np
 
-def myScheduleHelper(P, D):
+def _core_schedule(P, D):
     n = len(P)
-    jobs = sorted([(i + 1, P[i], D[i]) for i in range(n)], key=lambda x: x[2])
-    T = 0
-    on_time = []
-    removed = []
-    for j, p, d in jobs:
-        on_time.append((j, p, d))
-        T += p
-        if T > d:
-            j_drop, p_drop, d_drop = max(on_time, key=lambda x: x[1])
-            on_time.remove((j_drop, p_drop, d_drop))
-            removed.append(j_drop)
-            T -= p_drop
-    final_order = [jj for (jj, _, _) in on_time] + removed
-    return final_order, removed
+    by_deadline = sorted(range(1, n + 1), key=lambda j: D[j - 1])
+
+    t = 0
+    kept = []
+    dropped = []
+
+    for j in by_deadline:
+        kept.append(j)
+        t += P[j - 1]
+
+        if t > D[j - 1]:
+            worst_idx = 0
+            worst_job = kept[0]
+            worst_p = P[worst_job - 1]
+            for idx, jj in enumerate(kept[1:], 1):
+                pj = P[jj - 1]
+                if pj > worst_p:
+                    worst_p = pj
+                    worst_idx = idx
+                    worst_job = jj
+
+            kept.pop(worst_idx)
+            dropped.append(worst_job)
+            t -= worst_p
+
+    return kept + dropped, dropped
+
 
 def myMoore(P, D):
-    order, _removed = myScheduleHelper(P, D)
-    p_by_id = {i + 1: P[i] for i in range(len(P))}
+    order, _ = _core_schedule(P, D)
     t = 0
-    schedule_with_end = []
+    out = []
     for j in order:
-        t += p_by_id[j]
-        schedule_with_end.append((j, t))
-    return schedule_with_end
+        t += P[j - 1]
+        out.append((j, t))
+    return out
+
 
 def myMooreLate(P, D):
-    _order, removed = myScheduleHelper(P, D)
-    return removed
+    _, dropped = _core_schedule(P, D)
+    return dropped
 
 #######################################################
 ##############       QUESTION 2 HERE   ################
