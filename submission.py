@@ -60,6 +60,7 @@ def myMooreLate(P, D):
 ##############       QUESTION 2 HERE   ################
 #######################################################
 
+
 def myMcNaughton(P, m):
     if m <= 0:
         raise ValueError("m must be positive")
@@ -92,4 +93,14 @@ def myMcNaughton(P, m):
                 used = 0
                 rem = C
     return sol
+
+
+P = [4, 2, 1, 3]
+D = [5, 2, 3, 4]
+print(myMoore(P, D))     
+print(myMooreLate(P, D)) 
+idk = [6, 4, 3, 5]
+m = 3
+print(myMcNaughton(idk, m))
+
 
