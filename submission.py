@@ -61,28 +61,43 @@ def myMooreLate(P, D):
 #######################################################
 
 def myMcNaughton(P, m):
-    '''
-    Implement McNaughton function under here and return the optimal schedule.
-
-    Input:
-    List P: A vector of processing time of jobs J_1 ,...., J_n 
-    int m: number of parallel and identical processors 
-
-    return:
-    List[List[Tuple[int, float, float]]] sol: The optimal schedule for each job on each processor.
-        The i-th index of the outermost vector must contain the schedule of jobs for the (i+1)-th processor,
-        in the form of List[Tuple[int, float, float]]. (Since processors start from 1 and vector indices start from 0).
-        Each tuple inside this schedule must contain the following:
-            1. index of job (job index starts at 1 NOT 0!) - int
-            2. start time of the job on that respective processor - float
-            3. end time of the job on that respective processor - float
-    
-    
-    '''
-    pass
+    if m <= 0:
+        raise ValueError("m must be positive")
+    C = sum(P) / m if m else 0.0
+    sol = [[] for _ in range(m)]
+    if not P:
+        return sol
+    proc = 0
+    used = 0.0
+    rem = C
+    for i in range(len(P)):
+        job_id = i + 1
+        r = float(P[i])
+        while r > 0:
+            if rem == 0 and proc + 1 < m:
+                proc += 1
+                used = 0.0
+                rem = C
+            take = r if r <= rem else rem
+            start = used
+            end = used + take
+            sol[proc].append((job_id, start, end))
+            used = end
+            rem -= take
+            r -= take
+            if rem == 0 and proc + 1 < m:
+                proc += 1
+                used = 0.0
+                rem = C
+    return sol
+ 
 
 
 P = [4, 2, 1, 3]
 D = [5, 2, 3, 4]
 print(myMoore(P, D))     
 print(myMooreLate(P, D)) 
+idk = [6, 4, 3, 5]
+m = 3
+print(myMcNaughton(idk, m))
+
