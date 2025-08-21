@@ -60,23 +60,25 @@ def myMooreLate(P, D):
 ##############       QUESTION 2 HERE   ################
 #######################################################
 
+
 def myMcNaughton(P, m):
     if m <= 0:
         raise ValueError("m must be positive")
-    C = sum(P) / m if m else 0.0
+    total = sum(P)
+    C = (total + m - 1) // m
     sol = [[] for _ in range(m)]
     if not P:
         return sol
     proc = 0
-    used = 0.0
+    used = 0
     rem = C
     for i in range(len(P)):
         job_id = i + 1
-        r = float(P[i])
+        r = P[i]
         while r > 0:
             if rem == 0 and proc + 1 < m:
                 proc += 1
-                used = 0.0
+                used = 0
                 rem = C
             take = r if r <= rem else rem
             start = used
@@ -87,10 +89,9 @@ def myMcNaughton(P, m):
             r -= take
             if rem == 0 and proc + 1 < m:
                 proc += 1
-                used = 0.0
+                used = 0
                 rem = C
     return sol
- 
 
 
 P = [4, 2, 1, 3]
@@ -100,4 +101,5 @@ print(myMooreLate(P, D))
 idk = [6, 4, 3, 5]
 m = 3
 print(myMcNaughton(idk, m))
+
 
